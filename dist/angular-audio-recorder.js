@@ -80,6 +80,7 @@ var RecorderController = function (element, service, recorderUtils, $scope, $tim
     status = {
       isRecording: false,
       playback: PLAYBACK.STOPPED,
+      useCordova: service.isCordova,
       isDenied: null,
       isSwfLoaded: null,
       isConverting: false,
@@ -311,6 +312,7 @@ var RecorderController = function (element, service, recorderUtils, $scope, $tim
       window.resolveLocalFileSystemURL(cordovaMedia.url, function (entry) {
         entry.file(function (blob) {
           completed(blob);
+          scopeApply();
         });
       }, function (err) {
         console.log('Could not retrieve file, error code:', err.code);
