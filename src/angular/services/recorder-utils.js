@@ -28,8 +28,8 @@ angular.module('angularAudioRecorder.services')
             || cordova.file.externalApplicationStorageDirectory
             || cordova.file.sharedDirectory;
 
-          url += Date.now() + '_recordedAudio_' + id.replace('/[^A-Za-z0-9_-]+/gi', '-');
-          switch (window.cordova.platformId) {
+          url += Date.now() + '_recordedAudio_' + id.replace('/[^A-Za-z0-9_-]+/gi', '-') + '.wav';
+          /* switch (window.cordova.platformId) {
             case 'ios':
               url += '.wav';
               break;
@@ -44,7 +44,7 @@ angular.module('angularAudioRecorder.services')
 
             default :
               url += '.mp3';
-          }
+          }*/
 
           return url;
         }
