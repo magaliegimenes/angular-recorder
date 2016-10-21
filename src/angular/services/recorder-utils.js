@@ -29,11 +29,22 @@ angular.module('angularAudioRecorder.services')
             || cordova.file.sharedDirectory;
 
           url += Date.now() + '_recordedAudio_' + id.replace('/[^A-Za-z0-9_-]+/gi', '-') + '.wav';
-          switch (window.cordova.platformId) {
+          /* switch (window.cordova.platformId) {
             case 'ios':
-              url = Date.now() + '_recordedAudio_' + id.replace('/[^A-Za-z0-9_-]+/gi', '-') + '.wav';
+              url += '.wav';
               break;
-          }
+
+            case 'android':
+              url += '.amr';
+              break;
+
+            case 'wp':
+              url += '.wma';
+              break;
+
+            default :
+              url += '.mp3';
+          }*/
 
           return url;
         }

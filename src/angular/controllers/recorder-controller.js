@@ -138,14 +138,13 @@ var RecorderController = function (element, service, recorderUtils, $scope, $tim
         scopeApply();
       });
 
-    }
-
-    if (blob) {
-      blobToDataURL(blob, function (url) {
-        document.getElementById(audioObjId).src = url;
-      });
-    } else {
-      document.getElementById(audioObjId).removeAttribute('src');
+      if (blob) {
+        blobToDataURL(blob, function (url) {
+          document.getElementById(audioObjId).src = url;
+        });
+      } else {
+        document.getElementById(audioObjId).removeAttribute('src');
+      }
     }
   };
 
@@ -191,39 +190,17 @@ var RecorderController = function (element, service, recorderUtils, $scope, $tim
       if (service.isCordova) {
           cordovaMedia.url = recorderUtils.cordovaAudioUrl(control.id);
           //mobile app needs wav extension to save recording
-
-          if (window.cordova.platformId === 'ios') {
-              //first create the file
-              window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
-                  fileSystem.root.getFile(cordovaMedia.url, {
-                      create: true,
-                      exclusive: false
-                  }, function (fileEntry) {
-                      console.log("File " + cordovaMedia.url + " created at " + fileEntry.fullPath);
-                      cordovaMedia.url = fileEntry.fullPath;
-                      console.log(fileEntry);
-                      cordovaMedia.recorder = new Media(fileEntry.fullPath, function () {
-                          console.log('Media successfully played');
-                      }, function (err) {
-                          console.log('Media could not be launched' + err.code, err);
-                      }); //of new Media
-                      console.log("CordovaRecording");
-                      cordovaMedia.recorder.startRecord();
-                  }, function (err) {
-                      console.log('File not created' + err.code, err);
-                  }); //of getFile
-              }, function (err) {
-                  console.log('FileSystem not found' + err.code, err);
-              }); //of requestFileSystem
-          } else {
-              cordovaMedia.recorder = new Media(cordovaMedia.url, function () {
-                  console.log('Media successfully played');
-              }, function (err) {
-                  console.log('Media could not be launched' + err.code, err);
-              });
-              console.log('CordovaRecording');
-              cordovaMedia.recorder.startRecord();
+          var creationUrl = cordovaMedia.url;
+          if (window.cordova.platformId === 'ios' && !cordovaMedia.url.startsWith('cdv')) {
+            creationUrl = 'cdv' + creationUrl;
           }
+          cordovaMedia.recorder = new Media(creationUrl, function () {
+              console.log('Media successfully played');
+          }, function (err) {
+              console.log('Media could not be launched' + err.code, err);
+          });
+          console.log('CordovaRecording');
+          cordovaMedia.recorder.startRecord();
       }
       else if (service.isHtml5) {
         //HTML5 recording
