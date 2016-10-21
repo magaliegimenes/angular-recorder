@@ -14,21 +14,6 @@ angular.module('angularAudioRecorder', [
   'angularAudioRecorder.controllers',
   'angularAudioRecorder.directives'
 ]);
-angular.module('angularAudioRecorder.config', [])
-  .constant('recorderScriptUrl', (function () {
-    var scripts = document.getElementsByTagName('script');
-    var myUrl = scripts[scripts.length - 1].getAttribute('src');
-    var path = myUrl.substr(0, myUrl.lastIndexOf('/') + 1);
-    var a = document.createElement('a');
-    a.href = path;
-    return a.href;
-  }()))
-  .constant('recorderPlaybackStatus', {
-    STOPPED: 0,
-    PLAYING: 1,
-    PAUSED: 2
-  })
-;
 angular.module('angularAudioRecorder.controllers', [
   'angularAudioRecorder.config',
   'angularAudioRecorder.services'
@@ -234,17 +219,19 @@ var RecorderController = function (element, service, recorderUtils, $scope, $tim
                   }, function (fileEntry) {
                       console.log("File " + cordovaMedia.url + " created at " + fileEntry.fullPath);
                       cordovaMedia.url = fileEntry.fullPath;
+                      console.log(fileEntry);
                       cordovaMedia.recorder = new Media(fileEntry.fullPath, function () {
                           console.log('Media successfully played');
                       }, function (err) {
                           console.log('Media could not be launched' + err.code, err);
                       }); //of new Media
-                      log("Media created successfully");
+                      console.log("CordovaRecording");
+                      cordovaMedia.recorder.startRecord();
                   }, function (err) {
-                      console.log('Media could not be launched' + err.code, err);
+                      console.log('File not created' + err.code, err);
                   }); //of getFile
               }, function (err) {
-                  console.log('Media could not be launched' + err.code, err);
+                  console.log('FileSystem not found' + err.code, err);
               }); //of requestFileSystem
           } else {
               cordovaMedia.recorder = new Media(cordovaMedia.url, function () {
@@ -440,6 +427,21 @@ RecorderController.$inject = ['$element', 'recorderService', 'recorderUtils', '$
 
 angular.module('angularAudioRecorder.controllers')
   .controller('recorderController', RecorderController)
+;
+angular.module('angularAudioRecorder.config', [])
+  .constant('recorderScriptUrl', (function () {
+    var scripts = document.getElementsByTagName('script');
+    var myUrl = scripts[scripts.length - 1].getAttribute('src');
+    var path = myUrl.substr(0, myUrl.lastIndexOf('/') + 1);
+    var a = document.createElement('a');
+    a.href = path;
+    return a.href;
+  }()))
+  .constant('recorderPlaybackStatus', {
+    STOPPED: 0,
+    PLAYING: 1,
+    PAUSED: 2
+  })
 ;
 angular.module('angularAudioRecorder.directives', [
   'angularAudioRecorder.config',
