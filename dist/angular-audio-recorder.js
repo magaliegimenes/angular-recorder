@@ -212,7 +212,7 @@ var RecorderController = function (element, service, recorderUtils, $scope, $tim
 
           if (window.cordova.platformId === 'ios') {
               //first create the file
-              window.requestFileSystem(cordova.file.dataDirectory, 0, function (fileSystem) {
+              window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
                   fileSystem.root.getFile(cordovaMedia.url, {
                       create: true,
                       exclusive: false
@@ -428,21 +428,6 @@ RecorderController.$inject = ['$element', 'recorderService', 'recorderUtils', '$
 angular.module('angularAudioRecorder.controllers')
   .controller('recorderController', RecorderController)
 ;
-angular.module('angularAudioRecorder.config', [])
-  .constant('recorderScriptUrl', (function () {
-    var scripts = document.getElementsByTagName('script');
-    var myUrl = scripts[scripts.length - 1].getAttribute('src');
-    var path = myUrl.substr(0, myUrl.lastIndexOf('/') + 1);
-    var a = document.createElement('a');
-    a.href = path;
-    return a.href;
-  }()))
-  .constant('recorderPlaybackStatus', {
-    STOPPED: 0,
-    PLAYING: 1,
-    PAUSED: 2
-  })
-;
 angular.module('angularAudioRecorder.directives', [
   'angularAudioRecorder.config',
   'angularAudioRecorder.services',
@@ -639,6 +624,21 @@ angular.module('angularAudioRecorder.directives')
     }
   ]);
 
+angular.module('angularAudioRecorder.config', [])
+  .constant('recorderScriptUrl', (function () {
+    var scripts = document.getElementsByTagName('script');
+    var myUrl = scripts[scripts.length - 1].getAttribute('src');
+    var path = myUrl.substr(0, myUrl.lastIndexOf('/') + 1);
+    var a = document.createElement('a');
+    a.href = path;
+    return a.href;
+  }()))
+  .constant('recorderPlaybackStatus', {
+    STOPPED: 0,
+    PLAYING: 1,
+    PAUSED: 2
+  })
+;
 angular.module('angularAudioRecorder.services', ['angularAudioRecorder.config']);
 angular.module('angularAudioRecorder.services')
   .provider('recorderService', ['recorderScriptUrl',
