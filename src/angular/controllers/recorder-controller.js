@@ -189,15 +189,39 @@ var RecorderController = function (element, service, recorderUtils, $scope, $tim
     //Record initiation based on browser type
     var start = function () {
       if (service.isCordova) {
-        cordovaMedia.url = recorderUtils.cordovaAudioUrl(control.id);
-        //mobile app needs wav extension to save recording
-        cordovaMedia.recorder = new Media(cordovaMedia.url, function () {
-          console.log('Media successfully played');
-        }, function (err) {
-          console.log('Media could not be launched' + err.code, err);
-        });
-        console.log('CordovaRecording');
-        cordovaMedia.recorder.startRecord();
+          cordovaMedia.url = recorderUtils.cordovaAudioUrl(control.id);
+          //mobile app needs wav extension to save recording
+
+          if (window.cordova.platformId === 'ios') {
+              //first create the file
+              window.requestFileSystem(cordova.file.dataDirectory, 0, function (fileSystem) {
+                  fileSystem.root.getFile(cordovaMedia.url, {
+                      create: true,
+                      exclusive: false
+                  }, function (fileEntry) {
+                      console.log("File " + cordovaMedia.url + " created at " + fileEntry.fullPath);
+                      cordovaMedia.url = fileEntry.fullPath;
+                      cordovaMedia.recorder = new Media(fileEntry.fullPath, function () {
+                          console.log('Media successfully played');
+                      }, function (err) {
+                          console.log('Media could not be launched' + err.code, err);
+                      }); //of new Media
+                      log("Media created successfully");
+                  }, function (err) {
+                      console.log('Media could not be launched' + err.code, err);
+                  }); //of getFile
+              }, function (err) {
+                  console.log('Media could not be launched' + err.code, err);
+              }); //of requestFileSystem
+          } else {
+              cordovaMedia.recorder = new Media(cordovaMedia.url, function () {
+                  console.log('Media successfully played');
+              }, function (err) {
+                  console.log('Media could not be launched' + err.code, err);
+              });
+              console.log('CordovaRecording');
+              cordovaMedia.recorder.startRecord();
+          }
       }
       else if (service.isHtml5) {
         //HTML5 recording

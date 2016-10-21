@@ -24,27 +24,16 @@ angular.module('angularAudioRecorder.services')
             return 'record-audio' + id + '.wav';
           }
 
-          var url = cordova.file.tempDirectory
+          var url = cordova.file.dataDirectory
             || cordova.file.externalApplicationStorageDirectory
             || cordova.file.sharedDirectory;
 
           url += Date.now() + '_recordedAudio_' + id.replace('/[^A-Za-z0-9_-]+/gi', '-') + '.wav';
-          /* switch (window.cordova.platformId) {
+          switch (window.cordova.platformId) {
             case 'ios':
-              url += '.wav';
+              url = Date.now() + '_recordedAudio_' + id.replace('/[^A-Za-z0-9_-]+/gi', '-') + '.wav';
               break;
-
-            case 'android':
-              url += '.amr';
-              break;
-
-            case 'wp':
-              url += '.wma';
-              break;
-
-            default :
-              url += '.mp3';
-          }*/
+          }
 
           return url;
         }
