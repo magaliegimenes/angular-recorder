@@ -194,7 +194,7 @@ var RecorderController = function (element, service, recorderUtils, $scope, $tim
 
           if (window.cordova.platformId === 'ios') {
               //first create the file
-              window.requestFileSystem(cordova.file.dataDirectory, 0, function (fileSystem) {
+              window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
                   fileSystem.root.getFile(cordovaMedia.url, {
                       create: true,
                       exclusive: false
